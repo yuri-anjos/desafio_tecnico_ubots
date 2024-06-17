@@ -11,13 +11,12 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class Time {
 	private Set<Atendente> atendentes;
-	private BlockingQueue<Solicitacao> solicitacoes;
+	private final BlockingQueue<Solicitacao> solicitacoes = new LinkedBlockingDeque<>();
 	private SetorAtendimento setor;
 
 	private final Logger logger = LoggerFactory.getLogger(Time.class);
 
 	public Time(Set<Atendente> atendentes, SetorAtendimento setor) {
-		this.solicitacoes = new LinkedBlockingDeque<>();
 		this.atendentes = atendentes;
 		this.setor = setor;
 	}
@@ -31,21 +30,33 @@ public class Time {
 			while (!this.solicitacoes.isEmpty() && atendente.podeAtender()) {
 				var solicitacao = this.solicitacoes.poll();
 				atendente.atender(solicitacao);
-				logger.info("Atendente {} está atendendo a solicitação: {}", atendente.getNome(), solicitacao.getTitulo());
+				logger.info("Atendente {} está atendendo a solicitação: {} - {}", atendente.getNome(), solicitacao.getId(), solicitacao.getTitulo());
 			}
 		}
 		logger.info("Solicitações em espera: \n{}\n", solicitacoes);
 	}
 
-	public void removerSolicitacao(Solicitacao solicitacao) throws BadRequestException {
+	public void removerSolicitacao(String solicitacaoId) throws BadRequestException {
 		for (var atendente : atendentes) {
-			if (atendente.liberarSolicitacao(solicitacao)) {
-				logger.info("Solicitação {} removida!", solicitacao.getId());
+			if (atendente.liberarSolicitacao(solicitacaoId)) {
+				logger.info("Solicitação {} removida!", solicitacaoId);
 				distribuirSolicitacoes();
 				return;
 			}
 		}
 
-		throw new BadRequestException("Solicitação não encontrada ou não pode ser finalizada!");
+		throw new BadRequestException("Solicitação não encontrada ou impossível finalizar!");
+	}
+
+	public Set<Atendente> getAtendentes() {
+		return atendentes;
+	}
+
+	public BlockingQueue<Solicitacao> getSolicitacoes() {
+		return solicitacoes;
+	}
+
+	public SetorAtendimento getSetor() {
+		return setor;
 	}
 }

@@ -9,7 +9,7 @@ public class Atendente {
 	private String id;
 	private String nome;
 	private SetorAtendimento time;
-	private Set<Solicitacao> solicitacoes;
+	private final Set<Solicitacao> solicitacoes = new HashSet<>();
 
 	private static final int LIMITE_CAPACIDADE = 3;
 
@@ -20,7 +20,6 @@ public class Atendente {
 		this.id = id;
 		this.nome = nome;
 		this.time = time;
-		this.solicitacoes = new HashSet<>();
 	}
 
 	public boolean podeAtender() {
@@ -31,8 +30,8 @@ public class Atendente {
 		solicitacoes.add(solicitacao);
 	}
 
-	public boolean liberarSolicitacao(Solicitacao solicitacao) {
-		return solicitacoes.removeIf(item -> item.getId().equals(solicitacao.getId()));
+	public boolean liberarSolicitacao(String solicitacaoId) {
+		return solicitacoes.removeIf(item -> item.getId().equals(solicitacaoId));
 	}
 
 	public String getId() {
@@ -57,5 +56,9 @@ public class Atendente {
 
 	public void setTime(SetorAtendimento time) {
 		this.time = time;
+	}
+
+	public Set<Solicitacao> getSolicitacoes() {
+		return solicitacoes;
 	}
 }

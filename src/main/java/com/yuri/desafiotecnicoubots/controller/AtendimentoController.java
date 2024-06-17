@@ -1,5 +1,6 @@
 package com.yuri.desafiotecnicoubots.controller;
 
+import com.yuri.desafiotecnicoubots.dto.FinalizarAtendimentoDTO;
 import com.yuri.desafiotecnicoubots.model.Solicitacao;
 import com.yuri.desafiotecnicoubots.service.AtendimentoService;
 import org.apache.coyote.BadRequestException;
@@ -31,7 +32,7 @@ public class AtendimentoController {
 	}
 
 	@PostMapping("/finalizar")
-	public ResponseEntity<Void> finalizarAtendimento(@RequestBody Solicitacao solicitacao) {
+	public ResponseEntity<Void> finalizarAtendimento(@RequestBody FinalizarAtendimentoDTO solicitacao) {
 		try {
 			this.service.finalizarSolicitacao(solicitacao);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
